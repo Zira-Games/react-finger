@@ -9,8 +9,8 @@ import { calcDistance } from "./FingerUtils";
 
 export const FingerGlobal = {
   activePointersTotal: 0,
-  primaryStartPoint: { clientX: 0, clientY: 0 },
-  primaryEndPoint: { clientX: 0, clientY: 0 },
+  primaryStartPoint: { pageX: 0, pageY: 0 },
+  primaryEndPoint: { pageX: 0, pageY: 0 },
   get primaryMoveDistance() {
     const { primaryStartPoint, primaryEndPoint } = FingerGlobal;
     return calcDistance(primaryStartPoint, primaryEndPoint);
@@ -24,23 +24,23 @@ function cleanGlobalEffects() {
 function onPointerStart(event: PointerEvent) {
   FingerGlobal.activePointersTotal++;
   if (event.isPrimary) {
-    const { clientX, clientY } = event;
-    FingerGlobal.primaryStartPoint = { clientX, clientY };
-    FingerGlobal.primaryEndPoint = { clientX, clientY };
+    const { pageX, pageY } = event;
+    FingerGlobal.primaryStartPoint = { pageX, pageY };
+    FingerGlobal.primaryEndPoint = { pageX, pageY };
   }
 }
 
 function onPointerMove(event: PointerEvent) {
   if (event.isPrimary && FingerGlobal.activePointersTotal > 0) {
-    const { clientX, clientY } = event;
-    FingerGlobal.primaryEndPoint = { clientX, clientY };
+    const { pageX, pageY } = event;
+    FingerGlobal.primaryEndPoint = { pageX, pageY };
   }
 }
 
 function onPointerEnd(event: PointerEvent) {
   if (event.isPrimary) {
-    const { clientX, clientY } = event;
-    FingerGlobal.primaryEndPoint = { clientX, clientY };
+    const { pageX, pageY } = event;
+    FingerGlobal.primaryEndPoint = { pageX, pageY };
   }
   FingerGlobal.activePointersTotal--;
   if (FingerGlobal.activePointersTotal < 1) {

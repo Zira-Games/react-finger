@@ -40,13 +40,13 @@ export const FingerBasicProvider: FingerProvider = {
       // !pointer.movementY
     ) {
       // 让 ios 在上 pointerType !== 'mouse' 但仅单指时兼容 movementX/Y
-      const { clientX, clientY } = pointer;
+      const { pageX, pageY } = pointer;
       const prev = (flags.get(LATEST_POS) || pointers[0]) as PointerPointLike;
-      const movementX = clientX - prev.clientX;
-      const movementY = clientY - prev.clientY;
+      const movementX = pageX - prev.pageX;
+      const movementY = pageY - prev.pageY;
       const detail = { pointers, changedPointers, movementX, movementY };
       events.onFingerMove(FingerPointerEvent("onFingerMove", pointer, detail));
-      flags.set(LATEST_POS, { clientX, clientY });
+      flags.set(LATEST_POS, { pageX, pageY });
     } else {
       const detail = { pointers, changedPointers };
       events.onFingerMove(FingerPointerEvent("onFingerMove", pointer, detail));

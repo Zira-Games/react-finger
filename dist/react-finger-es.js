@@ -33,21 +33,21 @@ function isFunction(value) {
 function calcDistance(from, to) {
     if (!from || !to)
         return 0;
-    var x = from.clientX - to.clientX;
-    var y = from.clientY - to.clientY;
+    var x = from.pageX - to.pageX;
+    var y = from.pageY - to.pageY;
     return Math.sqrt(x * x + y * y);
 }
 function calcCenter(pointer1, pointer2) {
-    var maxX = Math.max(pointer1.clientX, pointer2.clientX);
-    var minX = Math.min(pointer1.clientX, pointer2.clientX);
-    var clientX = minX + (maxX - minX) / 2;
-    var maxY = Math.max(pointer1.clientY, pointer2.clientY);
-    var minY = Math.min(pointer1.clientY, pointer2.clientY);
-    var clientY = minY + (maxY - minY) / 2;
-    return { clientX: clientX, clientY: clientY };
+    var maxX = Math.max(pointer1.pageX, pointer2.pageX);
+    var minX = Math.min(pointer1.pageX, pointer2.pageX);
+    var pageX = minX + (maxX - minX) / 2;
+    var maxY = Math.max(pointer1.pageY, pointer2.pageY);
+    var minY = Math.min(pointer1.pageY, pointer2.pageY);
+    var pageY = minY + (maxY - minY) / 2;
+    return { pageX: pageX, pageY: pageY };
 }
 function calcRotate(pointer1, pointer2) {
-    var radians = Math.atan2(pointer2.clientY - pointer1.clientY, pointer2.clientX - pointer1.clientX);
+    var radians = Math.atan2(pointer2.pageY - pointer1.pageY, pointer2.pageX - pointer1.pageX);
     var degrees = radians * (180 / Math.PI);
     return degrees;
 }
@@ -60,8 +60,8 @@ var isIPadPro = typeof navigator !== "undefined" &&
 
 var FingerGlobal = {
     activePointersTotal: 0,
-    primaryStartPoint: { clientX: 0, clientY: 0 },
-    primaryEndPoint: { clientX: 0, clientY: 0 },
+    primaryStartPoint: { pageX: 0, pageY: 0 },
+    primaryEndPoint: { pageX: 0, pageY: 0 },
     get primaryMoveDistance() {
         var primaryStartPoint = FingerGlobal.primaryStartPoint, primaryEndPoint = FingerGlobal.primaryEndPoint;
         return calcDistance(primaryStartPoint, primaryEndPoint);
@@ -73,21 +73,21 @@ function cleanGlobalEffects() {
 function onPointerStart(event) {
     FingerGlobal.activePointersTotal++;
     if (event.isPrimary) {
-        var clientX = event.clientX, clientY = event.clientY;
-        FingerGlobal.primaryStartPoint = { clientX: clientX, clientY: clientY };
-        FingerGlobal.primaryEndPoint = { clientX: clientX, clientY: clientY };
+        var pageX = event.pageX, pageY = event.pageY;
+        FingerGlobal.primaryStartPoint = { pageX: pageX, pageY: pageY };
+        FingerGlobal.primaryEndPoint = { pageX: pageX, pageY: pageY };
     }
 }
 function onPointerMove(event) {
     if (event.isPrimary && FingerGlobal.activePointersTotal > 0) {
-        var clientX = event.clientX, clientY = event.clientY;
-        FingerGlobal.primaryEndPoint = { clientX: clientX, clientY: clientY };
+        var pageX = event.pageX, pageY = event.pageY;
+        FingerGlobal.primaryEndPoint = { pageX: pageX, pageY: pageY };
     }
 }
 function onPointerEnd(event) {
     if (event.isPrimary) {
-        var clientX = event.clientX, clientY = event.clientY;
-        FingerGlobal.primaryEndPoint = { clientX: clientX, clientY: clientY };
+        var pageX = event.pageX, pageY = event.pageY;
+        FingerGlobal.primaryEndPoint = { pageX: pageX, pageY: pageY };
     }
     FingerGlobal.activePointersTotal--;
     if (FingerGlobal.activePointersTotal < 1) {
@@ -335,8 +335,8 @@ var FingerPinchProvider = {
             var center = calcCenter(changedPointers[0], changedPointers[1]);
             flags.set(ORIGIN_CENTER, center);
             flags.set(LATEST_CENTER, center);
-            var centerX = center.clientX;
-            var centerY = center.clientY;
+            var centerX = center.pageX;
+            var centerY = center.pageY;
             var detail = {
                 pointers: pointers,
                 changedPointers: changedPointers,
@@ -368,12 +368,12 @@ var FingerPinchProvider = {
         var prevCenter = flags.get(LATEST_CENTER);
         var latestCenter = calcCenter(changedPointers[0], changedPointers[1]);
         flags.set(LATEST_CENTER, latestCenter);
-        var centerX = latestCenter.clientX;
-        var centerY = latestCenter.clientY;
-        var moveX = latestCenter.clientX - originCenter.clientX;
-        var moveY = latestCenter.clientY - originCenter.clientY;
-        var movementX = latestCenter.clientX - prevCenter.clientX;
-        var movementY = latestCenter.clientY - prevCenter.clientY;
+        var centerX = latestCenter.pageX;
+        var centerY = latestCenter.pageY;
+        var moveX = latestCenter.pageX - originCenter.pageX;
+        var moveY = latestCenter.pageY - originCenter.pageY;
+        var movementX = latestCenter.pageX - prevCenter.pageX;
+        var movementY = latestCenter.pageY - prevCenter.pageY;
         var originRotate = flags.get(ORIGIN_ROTATE);
         var latestRotate = calcRotate(changedPointers[0], changedPointers[1]);
         var rotate = latestRotate - originRotate;
@@ -445,13 +445,13 @@ var FingerBasicProvider = {
         var changedPointers = getChangedPointers();
         if (pointer.pointerType !== "mouse" &&
             pointers.length === 1) {
-            var clientX = pointer.clientX, clientY = pointer.clientY;
+            var pageX = pointer.pageX, pageY = pointer.pageY;
             var prev = (flags.get(LATEST_POS) || pointers[0]);
-            var movementX = clientX - prev.clientX;
-            var movementY = clientY - prev.clientY;
+            var movementX = pageX - prev.pageX;
+            var movementY = pageY - prev.pageY;
             var detail = { pointers: pointers, changedPointers: changedPointers, movementX: movementX, movementY: movementY };
             events.onFingerMove(FingerPointerEvent("onFingerMove", pointer, detail));
-            flags.set(LATEST_POS, { clientX: clientX, clientY: clientY });
+            flags.set(LATEST_POS, { pageX: pageX, pageY: pageY });
         }
         else {
             var detail = { pointers: pointers, changedPointers: changedPointers };
@@ -524,8 +524,8 @@ var FingerSwipeProvider = {
         var changedPointers = getChangedPointers();
         var start = pointers[0];
         var end = changedPointers[0];
-        var distX = (end === null || end === void 0 ? void 0 : end.clientX) - (start === null || start === void 0 ? void 0 : start.clientX);
-        var distY = (end === null || end === void 0 ? void 0 : end.clientY) - (start === null || start === void 0 ? void 0 : start.clientY);
+        var distX = (end === null || end === void 0 ? void 0 : end.pageX) - (start === null || start === void 0 ? void 0 : start.pageX);
+        var distY = (end === null || end === void 0 ? void 0 : end.pageY) - (start === null || start === void 0 ? void 0 : start.pageY);
         var direction = (function () {
             if (Math.abs(distX) > Math.abs(distY) &&
                 Math.abs(distX) > swipeMinDistanceThreshold) {

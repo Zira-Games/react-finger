@@ -51,8 +51,8 @@ export const FingerPinchProvider: FingerProvider = {
       const center = calcCenter(changedPointers[0], changedPointers[1]);
       flags.set(ORIGIN_CENTER, center);
       flags.set(LATEST_CENTER, center);
-      const centerX = center.clientX;
-      const centerY = center.clientY;
+      const centerX = center.pageX;
+      const centerY = center.pageY;
       const detail = {
         pointers,
         changedPointers,
@@ -84,12 +84,12 @@ export const FingerPinchProvider: FingerProvider = {
     const prevCenter = flags.get(LATEST_CENTER) as PointerPointLike;
     const latestCenter = calcCenter(changedPointers[0], changedPointers[1]);
     flags.set(LATEST_CENTER, latestCenter);
-    const centerX = latestCenter.clientX;
-    const centerY = latestCenter.clientY;
-    const moveX = latestCenter.clientX - originCenter.clientX;
-    const moveY = latestCenter.clientY - originCenter.clientY;
-    const movementX = latestCenter.clientX - prevCenter.clientX;
-    const movementY = latestCenter.clientY - prevCenter.clientY;
+    const centerX = latestCenter.pageX;
+    const centerY = latestCenter.pageY;
+    const moveX = latestCenter.pageX - originCenter.pageX;
+    const moveY = latestCenter.pageY - originCenter.pageY;
+    const movementX = latestCenter.pageX - prevCenter.pageX;
+    const movementY = latestCenter.pageY - prevCenter.pageY;
     const originRotate = flags.get(ORIGIN_ROTATE) as number;
     const latestRotate = calcRotate(changedPointers[0], changedPointers[1]);
     const rotate = latestRotate - originRotate;
